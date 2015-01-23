@@ -6,10 +6,11 @@ return!0}function Q(a,b,d,e){if(m.acceptData(a)){var f,g,h=m.expando,i=a.nodeTyp
 (function($){
 
     var $input = $('#pointInput'),
-        $mapInfo = $('#MapInfo');
-
+        $mapInfo = $('#MapInfo'),
+        $BaiduPoi = $('<div id="BaiduPoi"></div>');
+    $mapInfo.prepend( $BaiduPoi );
     $(document).on('click', '.BMap_mask', function(){
-        $mapInfo.html('<img width="265" height="200" src="http://p4.qhimg.com/t012e5011e5a2bea400.gif">')
+        $BaiduPoi.html('<img width="265" height="200" src="http://p4.qhimg.com/t012e5011e5a2bea400.gif">')
         getPois();
     });
 
@@ -17,14 +18,14 @@ return!0}function Q(a,b,d,e){if(m.acceptData(a)){var f,g,h=m.expando,i=a.nodeTyp
         setTimeout(function(){
             var location = $input.val().split(',');
             getData( location ).then( function( data ){
-                $mapInfo.html( getHtml(data) );
+                $BaiduPoi.html( getHtml(data) );
             });
         }, 0);
     }
 
     function getData( location ){
         return $.ajax({
-            url: 'http://210.52.217.236/api/getPlaceDataNew',
+            url: 'http://210.52.217.236/api/getPlaceData',
             data: { lng: location[0], lat: location[1] }
         });
     }
@@ -32,11 +33,11 @@ return!0}function Q(a,b,d,e){if(m.acceptData(a)){var f,g,h=m.expando,i=a.nodeTyp
     function getHtml( data ){
         if( data.errno != 0 ) return console.log(data.msg);
         var pois = data.data.pois;
-        var html = ['<ul>'];
+        var html = ['<table border="1" cellspacing="0"><tr><th>类型</th><th>地点</th></tr>'];
         for(var i = 0; i < pois.length; i++){
-            html.push('<li style="font-size: 1.2em; line-height: 1.5em; margin: 5px 0">&gt; ', pois[i].name, '</li>');
+            html.push('<tr><td>', pois[i].tag,'</td><td>', pois[i].name, '</td></tr>');
         }
-        html.push('</ul>');
+        html.push('</table>');
         return html.join('');
     }
 
